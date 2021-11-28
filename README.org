@@ -1,0 +1,21 @@
+* DiY OpenPGP card
+** What a OpenPGP card is?
+   From Wikipedia:
+   #+begin_quote
+   In cryptography, the OpenPGP card is an ISO/IEC 7816-4, -8
+   compatible smart card that is integrated with many OpenPGP
+   functions. Using this smart card, various cryptographic tasks
+   (encryption, decryption, digital signing/verification,
+   authentication etc.) can be performed. It allows secure storage of
+   secret key material; all versions of the protocol state, "Private
+   keys and passwords cannot be read from the card with any command or
+   function." However, new key pairs may be loaded onto the card
+   at any time, overwriting the existing ones.
+   #+end_quote
+
+** Purpose of this repository
+   This repository lists the steps and materials required to build
+   your own OpenPGP card out of opensource hardware and software.
+
+   It cost me around 25 euros but you'll probably be able to build
+   your own for cheaper buying on Aliexpress or Ebay.
