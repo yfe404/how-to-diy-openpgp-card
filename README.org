@@ -18,4 +18,17 @@
    your own OpenPGP card out of opensource hardware and software.
 
    It cost me around 25 euros but you'll probably be able to build
-   your own for cheaper buying on Aliexpress or Ebay.
+   your own for cheaper buying on Aliexpress or Ebay. If you're
+   willing to wait 2-3 weeks you can buy everything for under 9 euros.
+
+
+** Material list
+
+   - STM32 Blue Pill [[https://www.amazon.fr/ARCELI-STM32F103C8T6-d%C3%A9veloppement-syst%C3%A8me-minimum/dp/B077MJKCVT/][Amazon]] [[https://fr.aliexpress.com/item/1005002317649315.html][Aliexpress]]
+   - St-Link V2 [[https://www.amazon.fr/gp/product/B09HJQQ1C6/][Amazon]] [[https://fr.aliexpress.com/item/1766455290.html][Aliexpress]]
+
+   (you can find both [[https://fr.aliexpress.com/item/32792513237.html][here]])
+
+
+ 
+   
