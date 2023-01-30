@@ -69,3 +69,10 @@ messages if you try.
 
 BUT you can change the Admin PIN already.
 (source: https://blog.josefsson.org/2022/12/24/openpgp-key-on-fst-01sz/)
+
+
+*** Enable SSH access
+
+sources:
+- https://blog.danman.eu/2-usb-crypto-token-for-use-with-gpg-and-ssh/
+- Explains the above solution: https://opensource.com/article/19/4/gpg-subkeys-ssh
