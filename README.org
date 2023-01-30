@@ -30,5 +30,42 @@
    (you can find both [[https://fr.aliexpress.com/item/32792513237.html][here]])
 
 
- 
-   
+
+
+** Notes for later
+
+*** Connection failure with stlink-v2 using openocd
+In case of connection failure with stlink-v2 using openocd, *Press and
+hold the reset button while OpenOCD is trying to connect.*
+(source: https://stackoverflow.com/questions/66533547/why-am-i-getting-a-communication-failure-when-trying-to-connect-with-stlink-v2-u)
+(source: https://github.com/TeXitoi/blue-pill-quickstart/blob/master/README.md)
+
+*** Flash STM32
+
+#+begin_src sh
+sudo /usr/local/bin/openocd -f /usr/local/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg
+#+end_src
+(source: https://alexbirkett.github.io/microcontroller/2019/03/30/flash_bluepill_using_ST_link.html)
+
+In a second terminal use =telnet= 
+
+*** Getting error card not available: No such device
+
+#+begin_src sh
+gpg: selecting openpgp failed: No such device
+gpg: OpenPGP card not available: No such device
+#+end_src
+
+#+begin_src sh
+pkill -9 scdaemon
+#+end_src
+(source: https://support.nitrokey.com/t/openpgp-card-not-available-no-such-device/2018/10)
+
+*** Cannot set the Reset Code or change PIN on card
+
+The Gnuk software is configured to not allow this until the keys are
+imported. You would get the following somewhat cryptical error
+messages if you try.
+
+BUT you can change the Admin PIN already.
+(source: https://blog.josefsson.org/2022/12/24/openpgp-key-on-fst-01sz/)
