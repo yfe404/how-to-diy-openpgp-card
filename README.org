@@ -76,3 +76,13 @@ BUT you can change the Admin PIN already.
 sources:
 - https://blog.danman.eu/2-usb-crypto-token-for-use-with-gpg-and-ssh/
 - Explains the above solution: https://opensource.com/article/19/4/gpg-subkeys-ssh
+
+
+*** Card not detected
+
+#+begin_src sh
+gpgconf --kill gpg-agent
+#+end_src
+
+sources:
+- [[https://libreddit.spike.codes/r/archlinux/comments/vuc957/anyone_suddenly_seeing_gpg_openpgp_card_not/]]
