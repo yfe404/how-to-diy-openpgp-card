@@ -31,6 +31,81 @@
 
 
 
+** Tuto background
+https://blog.thestaticturtle.fr/lets-make-a-diy-gpg-usb-key/
+
+** Instructions
+Note: on the Blue pill, using the stlink no need to move the jumpers, let them on 0. 
+
+#+begin_src sh
+git clone https://github.com/TheStaticTurtle/gnuk
+cd gnuk
+
+git pull
+git submodule update --init
+git submodule sync
+git submodule update --remote
+
+cd chopstx
+git pull origin master
+cd ..
+
+cd src
+./configure --vidpid=234b:0000 --target=TURTLE_AUTH --enable-confirm-button
+make clean
+make
+#+end_src
+
+Adapt with your path
+#+begin_src sh
+sudo /usr/local/bin/openocd -f /usr/local/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg
+#+end_src
+
+In another terminal:
+#+begin_src sh
+echo 'stm32f1x unlock 0' > tmp.network
+echo 'reset halt' >> tmp.network
+echo 'stm32f1x unlock 0' >> tmp.network
+echo 'reset halt' >> tmp.network
+echo 'flash erase_sector 0 0 127' >> tmp.network
+echo 'flash write_bank 0 ./gnuk/src/build/gnuk.bin 0' >> tmp.network
+echo 'reset' >> tmp.network
+echo 'exit' >> tmp.network
+
+cat tmp.network | netcat 127.0.0.1 4444
+rm tmp.network
+#+end_src
+
+Afer flashing you should be able to see this in the output of =dmesg=
+#+begin_src sh
+[  808.561960] usb 2-1: Product: Gnuk Token
+[  808.561964] usb 2-1: Manufacturer: Free Software Initiative of Japan
+[  808.561967] usb 2-1: SerialNumber: TURTLE-1.2.15-87033357
+#+end_src
+
+Also running =gpg --card-status= should show:
+#+begin_src sh
+Reader ...........: 234B:0000:TURTLE-1.2.15-87033357:0
+Application ID ...: D276000124010200FFFE870333570000
+Version ..........: 2.0
+Manufacturer .....: unmanaged S/N range
+Serial number ....: 87033357
+Name of cardholder: [not set]
+Language prefs ...: [not set]
+Sex ..............: unspecified
+URL of public key : [not set]
+Login data .......: [not set]
+Signature PIN ....: forced
+Key attributes ...: rsa2048 rsa2048 rsa2048
+Max. PIN lengths .: 127 127 127
+PIN retry counter : 3 3 3
+Signature counter : 0
+Signature key ....: [none]
+Encryption key....: [none]
+Authentication key: [none]
+General key info..: [none]
+#+end_src
+
 
 ** Notes for later
 
