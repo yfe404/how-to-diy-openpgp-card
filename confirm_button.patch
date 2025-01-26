@@ -1,0 +1,97 @@
+diff --git a/chopstx b/chopstx
+--- a/chopstx
++++ b/chopstx
+@@ -1 +1 @@
+-Subproject commit d934006a4ac40946fea9ee97fed5f21990ff5228
++Subproject commit d934006a4ac40946fea9ee97fed5f21990ff5228-dirty
+diff --git a/src/config.h.in b/src/config.h.in
+index eec2061..b7c26a0 100644
+--- a/src/config.h.in
++++ b/src/config.h.in
+@@ -6,3 +6,4 @@
+ @ACKBTN_DEFINE@
+ @SERIALNO_STR_LEN_DEFINE@
+ @KDF_DO_REQUIRED_DEFINE@
++@CONFIRM_BUTTON_DEFINE@
+diff --git a/src/configure b/src/configure
+index 1188a72..b55cbaf 100755
+--- a/src/configure
++++ b/src/configure
+@@ -42,6 +42,7 @@ with_dfu=default
+ sys1_compat=yes
+ certdo=no
+ factory_reset=no
++confirm_button=no
+ ackbtn_support=yes
+ flash_override=""
+ kdf_do=${kdf_do:-required}
+@@ -86,7 +87,11 @@ for option; do
+   --disable-sys1-compat)
+     sys1_compat=no ;;
+   --enable-factory-reset)
+-    factory_reset=yes ;;
++      factory_reset=yes ;;
++  --enable-confirm-button)
++    confirm_button=yes ;;
++  --disable-confirm-button)
++    confirm_button=no ;;
+   --disable-factory-reset)
+     factory_reset=no ;;
+   --with-dfu)
+@@ -145,6 +150,8 @@ Configuration:
+ 			   executable is target independent
+ 			   but requires SYS 2.0 or newer
+   --with-dfu		build image for DFU 		[<target specific>]
++  --enable-confirm-button
++			enable button to confirm requests	[no]
+ EOF
+   exit 0
+ fi
+@@ -303,6 +310,14 @@ SERIALNO="FSIJ-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
+ SERIALNO_STR_LEN_DEFINE="#define SERIALNO_STR_LEN ${#SERIALNO}"
+ 
+ 
++if test "$confirm_button" = "yes"; then
++  CONFIRM_BUTTON_DEFINE="#define CONFIRM_BUTTON_SUPPORT 1"
++  echo "Confirm button is supported"
++else
++  CONFIRM_BUTTON_DEFINE="#undef CONFIRM_BUTTON_SUPPORT"
++  echo "Confirm button is NOT supported"
++fi
++
+ if test "$sys1_compat" = "yes"; then
+   CONFIG="$target:dfu=$with_dfu:certdo=$certdo:factory_reset=$factory_reset:kdf=$kdf_do"
+ else
+@@ -475,5 +490,6 @@ sed -e "s/@DFU_DEFINE@/$DFU_DEFINE/" \
+     -e "s/@ACKBTN_DEFINE@/$ACKBTN_DEFINE/" \
+     -e "s/@SERIALNO_STR_LEN_DEFINE@/$SERIALNO_STR_LEN_DEFINE/" \
+     -e "s/@KDF_DO_REQUIRED_DEFINE@/$KDF_DO_REQUIRED_DEFINE/" \
++    -e "s/@CONFIRM_BUTTON_DEFINE@/$CONFIRM_BUTTON_DEFINE/" \
+ 	< config.h.in > config.h
+ exit 0
+diff --git a/src/openpgp.c b/src/openpgp.c
+index 90b8711..ca21629 100644
+--- a/src/openpgp.c
++++ b/src/openpgp.c
+@@ -847,6 +847,10 @@ cmd_pso (struct eventflag *ccid_comm)
+   unsigned int result_len = 0;
+   int cs;
+ 
++#ifdef CONFIRM_BUTTON_SUPPORT
++    wait_button();
++  #endif
++ 
+   if (P1 (apdu) == 0x9e && P2 (apdu) == 0x9a)
+     {
+       attr = gpg_get_algo_attr (GPG_KEY_FOR_SIGNING);
+@@ -1005,6 +1009,10 @@ cmd_internal_authenticate (struct eventflag *ccid_comm)
+   unsigned int result_len = 0;
+   int cs;
+ 
++  #ifdef CONFIRM_BUTTON_SUPPORT
++    wait_button();
++  #endif
++  
+   if (P1 (apdu) != 0x00 || P2 (apdu) != 0x00)
+     {
+       GPG_CONDITION_NOT_SATISFIED ();

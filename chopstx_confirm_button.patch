@@ -1,0 +1,71 @@
+diff --git a/board/board-blue-pill.h b/board/board-blue-pill.h
+index db54a95..0875b63 100644
+--- a/board/board-blue-pill.h
++++ b/board/board-blue-pill.h
+@@ -14,6 +14,7 @@
+ #define GPIO_LED_CLEAR_TO_EMIT          13
+ #define GPIO_USB_BASE   GPIOA_BASE
+ #undef  GPIO_OTHER_BASE
++#define GPIO_BUTTON_PIN			  8
+ 
+ /*
+  * Port A setup.
+diff --git a/mcu/sys-stm32f103.c b/mcu/sys-stm32f103.c
+index 3430a16..2fc2f51 100644
+--- a/mcu/sys-stm32f103.c
++++ b/mcu/sys-stm32f103.c
+@@ -21,6 +21,8 @@
+ #include "mcu/clk_gpio_init-stm32f.c"
+ 
+ 
++
++
+ /*
+  * When a board supports USB self-powered configuration, there is a
+  * control to enable external pull-up 1K5 resistor.  The voltage
+@@ -64,6 +66,32 @@ set_led (int on)
+ #endif
+ }
+ 
++
++static void wait (int count)
++{
++  int i;
++
++  for (i = 0; i < count; i++)
++    asm volatile ("" : : "r" (i) : "memory");
++}
++
++
++void wait_button() {
++    #if defined(GPIO_BUTTON_PIN)
++        while (1){
++            set_led(1);
++            wait(1000000);
++            if( (GPIOA->IDR & (1 << GPIO_BUTTON_PIN)) ) break;
++
++            set_led(0);
++            wait(1000000);
++            if( (GPIOA->IDR & (1 << GPIO_BUTTON_PIN)) ) break;
++        }
++    #endif
++}
++
++
++
+ static void
+ usb_lld_sys_shutdown (void)
+ {
+diff --git a/mcu/sys-stm32f103.h b/mcu/sys-stm32f103.h
+index 4664edf..7fa1b3d 100644
+--- a/mcu/sys-stm32f103.h
++++ b/mcu/sys-stm32f103.h
+@@ -29,6 +29,8 @@ typedef void (*nonreturn_handler0)(void)__attribute__((noreturn));
+ typedef void (*nonreturn_handler1)(void *)__attribute__((noreturn));
+ extern handler vector[16];
+ 
++void wait_button(void);
++
+ static inline const uint8_t *
+ unique_device_id (void)
+ {
